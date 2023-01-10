@@ -1,0 +1,35 @@
+varsion: '3.8'
+service:
+  mongodb:
+    image: mongo-latest
+    env_file:
+      - .env
+    ports:
+      - 27027:27017
+    volumes:
+      - mongodb_data_container:/data/db
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+      target: dev
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - 3000:3000
+    command: nom run start:dev
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    volumes:
+      -
+
+volumes:
+  mongodb_data_container:
